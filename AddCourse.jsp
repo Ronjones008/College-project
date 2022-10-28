@@ -1,5 +1,7 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@page import="com.infinite.college.CollegeDAO"%>
+<%@page import="java.sql.Date"%>
+<%@page import="com.infinite.college.Course"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
@@ -13,7 +15,7 @@
 <form method="get" action="AddCourse.jsp">
 	<center>
 	Enter Duration :
-	<input type="text" name="duration"/><br/><br/>
+	<input type="number" name="duration"/><br/><br/>
 	Eneter Start Date :
 	<input type="date" name="startDate"/><br/><br/>
 	Enter End Date :
@@ -25,24 +27,18 @@
 	</center>
 </form>
 
-	<c:if test="${param.hod != null}">
-		<jsp:useBean id="beanDao" class="com.infinite.college.CollegeDAO" />
-		<jsp:useBean id="beanCourse" class="com.infinite.college.Course"/>
-		
-		<jsp:setProperty property="duration" name="beanCourse"/>
-
-		<fmt:parseDate value="${param.startDate}" pattern="yyyy-MM-dd" var="cdate1"/>
-		<c:set var="sqlDate1" value="${beanDao.convertDate(cdate1)}"/>
-		
-		<fmt:parseDate value="${param.endDate}" pattern="yyyy-MM-dd" var="cdate2"/>
-		<c:set var="sqlDate2" value="${beanDao.convertDate(cdate2)}"/>
-		
-		<jsp:setProperty property="startDate" name="beanCourse" value="${sqlDate1}"/>
-		<jsp:setProperty property="endDate" name="beanCourse" value="${sqlDate2}"/>
-		
-		<jsp:setProperty property="hod" name="beanCourse"/>
-		
-		<c:out value="${beanDao.AddCourseList(beanCourse)}"></c:out>
-</c:if>
+	<% if(request.getParameter("hod") != null){
+		 
+		Course course = new Course();
+		course.setDuration(Integer.parseInt(request.getParameter("duration")));
+		Date sDate = Date.valueOf(request.getParameter("startDate"));
+		Date eDate = Date.valueOf(request.getParameter("endDate"));
+		course.setStartDate(sDate);
+		course.setEndDate(eDate);
+		course.setHod(request.getParameter("hod"));
+		CollegeDAO dao = new CollegeDAO();
+		dao.addCourseList(course);
+	}
+	%>
 </body>
 </html>
